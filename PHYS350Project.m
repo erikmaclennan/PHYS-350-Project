@@ -28,7 +28,6 @@ for time = 1:N
         scatter3(positions(1,:), positions(2,:), positions(3,:));
         axis([-10,10,-10,10,-10,10]);
         pause(0.001);
-        
     end
     
 end
