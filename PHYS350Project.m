@@ -5,7 +5,7 @@ n = 100; %number of particles
 positions, velocities, deltat, steps, global_potential, local
 
 
-%method = simple_euler
+method = simple_euler(positions, velocities, delta_t, 1, global_potential, local_potential);
 
 %method = rk4
 %method = backward_euler
