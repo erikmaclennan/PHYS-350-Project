@@ -8,9 +8,13 @@ outputfilename = 'test4.csv';
 [current_position, current_velocity] = load_initial_conditions(filename);
    
 %csvwrite(outputfilename,[current_position, current_velocity]);
-
-global_potential = @(r) 0;
-local_potential = @(r) -7./r;
+r = sym(x)
+sym_global_potential = 1/r
+sym_local_potential = 1/r
+global_potential = matlabFunction(sym_global_potential);
+local_potential = matlabFunction(sym_local_potential);
+global_force = matlabFunction(diff(sym_global_potential))
+local_force = matlabFunction(diff(sym_local_potential))
 
 method = @simple_euler;
 %method = @rk4;
@@ -20,7 +24,7 @@ method = @simple_euler;
 
 for time = 1:N
    
-    [current_position, current_velocity] = method(current_position, current_velocity, delta_t, iterative_steps, global_potential, local_potential);
+    [current_position, current_velocity] = method(current_position, current_velocity, delta_t, iterative_steps, global_force, local_force);
     
     %append_to_csv(outputfilename, time, current_position, current_velocity);
     
