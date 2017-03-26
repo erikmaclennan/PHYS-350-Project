@@ -1,17 +1,16 @@
 N = 10000000; %total time steps
-iterative_steps = 1;
+iterative_steps = 5;
 delta_t = 0.0001;
-n = 100; %number of particles
 
-filename = 'testData.csv';
-outputfilename = 'test.csv';
+filename = 'spinningFour.csv';
+outputfilename = 'test4.csv';
 
 [current_position, current_velocity] = load_initial_conditions(filename);
    
-csvwrite(outputfilename,[current_position, current_velocity]);
+%csvwrite(outputfilename,[current_position, current_velocity]);
 
-global_potential = @(r) -1./r;
-local_potential = @(r) 25./r - 1.*r;
+global_potential = @(r) 0;
+local_potential = @(r) -7./r;
 
 method = @simple_euler;
 %method = @rk4;
@@ -21,13 +20,14 @@ method = @simple_euler;
 
 for time = 1:N
    
-    [currentposition, currentvelocity] = method(current_position, current_velocity, delta_t, iterative_steps, global_potential, local_potential);
-    append_to_csv(outputfilename, time, currentposition, currentvelocity);
+    [current_position, current_velocity] = method(current_position, current_velocity, delta_t, iterative_steps, global_potential, local_potential);
     
-    if mod(time,100) == 0
-        scatter3(positions(1,:), positions(2,:), positions(3,:));
-        axis([-10,10,-10,10,-10,10]);
-        pause(0.001);
+    %append_to_csv(outputfilename, time, current_position, current_velocity);
+    
+    if mod(time,1000) == 0
+        scatter3(current_position(:,1), current_position(:,2), current_position(:,3));
+        axis([-20,20,-20,20,-20,20]);
+        pause(0.0001);
     end
     
 end
