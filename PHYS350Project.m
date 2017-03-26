@@ -3,7 +3,7 @@ iterative_steps = 1;
 delta_t = 0.0001;
 n = 100; %number of particles
 
-filename = 'testdata.csv';
+filename = 'testData.csv';
 outputfilename = 'test.csv';
 
 [current_position, current_velocity] = load_initial_conditions(filename);
@@ -21,7 +21,7 @@ method = @simple_euler;
 
 for time = 1:N
    
-    [currentposition, currentvelocity] = method(positions, velocities, delta_t, iterative_steps, global_potential, local_potential);
+    [currentposition, currentvelocity] = method(current_position, current_velocity, delta_t, iterative_steps, global_potential, local_potential);
     append_to_csv(outputfilename, time, currentposition, currentvelocity);
     
     if mod(time,100) == 0
