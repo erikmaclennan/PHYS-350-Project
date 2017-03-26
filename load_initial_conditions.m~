@@ -1,4 +1,4 @@
-function [ positions, velocities ] = load_initial_conditions( filename )
+function [ velocities, positions ] = load_initial_conditions( filename )
 %loadInitialConditions Loads initial conditions for simulation from last
 %line of 
 
@@ -14,12 +14,12 @@ velocities = zeros(particle_count, 3);
 
 last_data = data(lastRow, 2:columns);
 
-for column = 0 : columns-2
-    row = fix(column/6)+1;
-    col = mod(column-3,3)+1;
-    if column < (columns-1)/2
-        positions(row, col) = last_data(column+1);
+for column = 0 : columns-1
+    if column < columns-1)/2
+        positions(fix(column/3)+1, mod(column,3)+1) = last_data(column+1);
     else
-        velocities(row, col) = last_data(column+1);
+        velocities(fix(column/3)+1, mod(column,3)+1) = last_data(column+1);
     end
+end
+
 end
