@@ -23,7 +23,7 @@ for column = 0 : columns-2
         positions(row, col) = last_data(column+1);
     else
         
-        row = fix((column - (columns-1)/2)/3)+1;
+        row = fix(column - (columns-1)/2/3)+1;
         col = mod(column-3,3)+1;
         
         velocities(row, col) = last_data(column+1);

@@ -1,7 +1,10 @@
 function [positions,velocities]=simple_euler(...
     positions,velocities,delta_t,n_steps,global_potential,local_potential)
-    vector_size = size(positions);
-    n = vector_size(2);
+    [n, ~] = size(positions);
+    I = eye(n);
+    positions = positions';
+    velocities = velocities';
+    
     for i= 1:n_steps
         x_pos = zeros(n) + positions(1,:);
         x_dist = x_pos-x_pos';
@@ -34,6 +37,9 @@ function [positions,velocities]=simple_euler(...
         velocities(2,:) = velocities(2,:) + delta_t.*sum(abs_force_mag.*abs_y_hat);
         velocities(3,:) = velocities(3,:) + delta_t.*sum(abs_force_mag.*abs_z_hat);
 
-        positions = positions+velocities.*delta_t;
+        positions = (positions+velocities.*delta_t);
     end
+    
+    positions = positions';
+    velocities = velocities';
 end
