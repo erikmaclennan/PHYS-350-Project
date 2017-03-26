@@ -1,34 +1,33 @@
-N = 10000000; %time steps
+N = 10000000; %total time steps
 delta_t = 0.0001;
+n = 100; %number of particles
 
-n = 100; % number of particles
+positions, velocities, deltat, steps, global_potential, local
 
-positions = [5 0 0; % x,y,z
-            -5 0 0;
-             0 5 0;
-             0 -5 0;
-             0 0 0]';
-         
+
+%method = simple_euler
+
+%method = rk4
+%method = backward_euler
+
+%method = simplectic
+
+positions = 
+velocities = 
+
 positions = (rand(3,n)-0.5)*3;
 positions(1,1:50) = positions(1,1:50)+5;
 positions(1,51:100) = positions(1,51:100)-5;
                  
-velocities = [0 2 -2; %vx, vy, vz
-              0 -2 -2;
-              -2 0 -2;
-              2 0 -2;
-              0 0 8]';
+
 
 velocities =(rand(3,n)-0.5)*9;
 
 velocities(2,1:50) = velocities(2,1:50)+8;
 velocities(2,51:100) = velocities(2,51:100)-8;
                  
-force = @(r) -1./r;
-abs_force = @(r) 25./r - 1.*r;
-I = eye(n);
-
-
+global_potential = @(r) -1./r;
+local_potential = @(r) 25./r - 1.*r;
 
 for time = 1:N
     x_pos = zeros(n) + positions(1,:);
