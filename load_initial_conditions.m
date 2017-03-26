@@ -23,5 +23,3 @@ for column = 0 : columns-2
         velocities(row, col) = last_data(column+1);
     end
 end
-
-end
