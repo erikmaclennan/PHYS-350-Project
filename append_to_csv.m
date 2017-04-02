@@ -7,7 +7,7 @@ function append_to_csv(name, time, positions ,velocities)
             positions2 = reshape(positions1,[],1);
             velocities2 = reshape(velocities1, [], 1);
 
-            M = [time positions velocities];
+            M = [time positions2' velocities2'];
             dlmwrite(name, M,'precision','%.6f', '-append');           
 end
 

@@ -52,7 +52,7 @@ for time = 1:N
         histogram(energy);
         subplot(2,1,2);
         scatter3(current_position(:,1), current_position(:,2), current_position(:,3));
-        axis([-viewing_bound,viewing_bound,-viewing_bound,viewing_bound,-viewing_bound,viewing_bound]);
+        axis([-view,100,-100,100,-100,100]);
         pause(0.0001);
     end
     
