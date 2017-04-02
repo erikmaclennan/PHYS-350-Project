@@ -15,10 +15,10 @@ Format per row:
  1  2 3 4   5  6  7   8  9 10   11  12  13    14 15 16 17
 %}
 
-filename = 'testFile.csv';
+fileName = 'Gtest1.csv';
 
-spesification = [ 10, 2,3,4, 1,2,3, 1,2,3, 4,5,6, 4, 4,5,6;
-                  4, -2,-3,-4, 1,2,3, .1,3,.1, 4,5,6, 4, 4,5,6];
+spesification = [ 10, 5,0,0, 1,1,1, 0,1,0, 1,1,1, 4, 0,0,1;
+                  2, -5,0,0, 1,1,1, 0,-3,0, 1,1,1, 4, 0,0,-1];
 
 totalParticleCount = sum(spesification(:,1));
 
