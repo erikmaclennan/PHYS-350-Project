@@ -5,7 +5,7 @@ function [ positions, velocities ] = load_initial_conditions( filename )
 data = csvread(filename);
 
 [lastRow, columns] = size(data);
-% columns is delta t + pos + vel
+% columns are delta t + pos + vel
 
 particle_count = (columns-1)/6;
 
