@@ -7,13 +7,13 @@ N = 10000000; %total time steps
 iterative_steps = 1; 
 delta_t = 0.0001;
 write_step = 10;
-activate_write = false;
+activate_write = true;
 
 viewing_bound = 10;
 
 
 filename = 'spinningFour.csv';
-outputfilename = 'test7.csv';
+outputfilename = 'test9.csv';
 
 [current_position, current_velocity] = load_initial_conditions(filename);
 
@@ -22,17 +22,17 @@ outputfilename = 'test7.csv';
 
 %csvwrite(outputfilename,[current_position, current_velocity]);
 syms r;
-sym_global_potential = 100/r
+sym_global_potential = 1E-65*100/r
 sym_local_potential = 100/r
 global_potential = matlabFunction(sym_global_potential);
 local_potential = matlabFunction(sym_local_potential);
-global_force = matlabFunction(diff(sym_global_potential))
-local_force = matlabFunction(diff(sym_local_potential))
+global_force = matlabFunction(-diff(sym_global_potential))
+local_force = matlabFunction(-diff(sym_local_potential))
 
 
 %% Iterative method
-%method = @simple_euler;
-method = @rk4;
+method = @simple_euler;
+%method = %@rk4;
 %method = @backward_euler;
 %method = @simplectic;
 
