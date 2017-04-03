@@ -25,7 +25,7 @@ outputfilename = 'nolanTest4.csv';
 
 syms r;
 sym_global_potential = 1e-65/r
-sym_local_potential = -500/r
+sym_local_potential = -200/r
 global_potential = matlabFunction(sym_global_potential);
 local_potential = matlabFunction(sym_local_potential);
 global_force = matlabFunction(-diff(sym_global_potential))
@@ -34,8 +34,8 @@ local_force = matlabFunction(-diff(sym_local_potential))
 
 
 %% Iterative method
-method = @simple_euler;
-%method = @rk4;
+%method = @simple_euler;
+method = @rk4;
 %method = @backward_euler;
 %method = @simplectic;
 
@@ -47,7 +47,7 @@ pot = [];
 
 for time = 1:N
     kinetic_energies = current_velocity.^2;
-    kinetic_energies = particle_mass * sum(kinetic_energies,2);
+    kinetic_energies = sum(kinetic_energies,2);
     global_potential_energies = global_potential(sqrt(sum(current_position.^2,2)));
     
     
@@ -85,6 +85,9 @@ for time = 1:N
         hold on;
         plot(times,pot);
         legend('show')
+        legend('total energy', 'kinetic energy', 'potential energy')
+        grid minor
+        grid on
         hold off;
         
         %total_energies
