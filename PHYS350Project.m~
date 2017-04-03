@@ -15,7 +15,7 @@ viewing_bound = 10;
 
 filename = 'spinningFour.csv';
 
-outputfilename = 'nolanTest4.csv';
+outputfilename = 'nolanTest.csv';
 
 
 [current_position, current_velocity] = load_initial_conditions(filename);
@@ -24,18 +24,18 @@ outputfilename = 'nolanTest4.csv';
 %% Potential functions
 
 syms r;
-sym_global_potential = 1e-65/r
-sym_local_potential = -500/r
+sym_global_potential = 1E-65*100/r
+sym_local_potential = -100/r
 global_potential = matlabFunction(sym_global_potential);
 local_potential = matlabFunction(sym_local_potential);
-global_force = matlabFunction(-diff(sym_global_potential))
-local_force = matlabFunction(-diff(sym_local_potential))
+global_force = matlabFunction(-diff(sym_global_potential));
+local_force = matlabFunction(-diff(sym_local_potential));
 
 
 
 %% Iterative method
-method = @simple_euler;
-%method = @rk4;
+%method = @simple_euler;
+method = @rk4;
 %method = @backward_euler;
 %method = @simplectic;
 
@@ -81,9 +81,9 @@ for time = 1:N
         subplot(2,1,1);
         plot(times,tot);
         hold on;
-        plot(times,kin);
+        plot(times,k);
         hold on;
-        plot(times,pot);
+        plot(times,tot);
         legend('show')
         hold off;
         
