@@ -34,8 +34,8 @@ local_force = matlabFunction(-diff(sym_local_potential))
 
 
 %% Iterative method
-%method = @simple_euler;
-method = @rk4;
+method = @simple_euler;
+%method = @rk4;
 %method = @backward_euler;
 %method = @simplectic;
 
@@ -46,8 +46,8 @@ kin = [];
 pot = [];
 
 for time = 1:N
-    kinetic_energies = current_velocity.^2/2;
-    kinetic_energies = sum(kinetic_energies,2);
+    kinetic_energies = current_velocity.^2/20;
+    kinetic_energies = sum(kinetic_energies,2)
     global_potential_energies = global_potential(sqrt(sum(current_position.^2,2)));
     
     
@@ -63,7 +63,7 @@ for time = 1:N
     local_potential_energies(logical(eye(n))) = 0;
     local_potential_energies=sum(local_potential_energies,2);
     
-    potential_energies = global_potential_energies + local_potential_energies;
+    potential_energies = global_potential_energies + local_potential_energies
     
     total_energies = kinetic_energies + potential_energies;
     [current_position, current_velocity] = method(current_position, current_velocity, delta_t, iterative_steps, global_force, local_force);
