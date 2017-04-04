@@ -2,23 +2,23 @@
 %{ 
 Generate clusters of particles.
 Spesification matrix:
-- number of particles, 
+- number of particles (n)
 - centre of cluster (x,y,z)
-- standard deviation in position (x,y,z)
-- average velocity of clusters (x,y,z)
-- standard deviation of velocity (x,y,z)
-- magnitude of angular momentum
-- dirction of angular momentum
+- standard deviation in position (dx,dy,dz)
+- average velocity of clusters (vx,vy,vz)
+- magnitude of angular momentum (lmag)
+- standard deviation in velocities (dv)
+- dirction of angular momentum (lx,ly,lz)
 
 Format per row:
 [n, x,y,z, dx,dy,dz, vx,vy,vz, lmag,dv, lx,ly,lz]
  1  2 3 4   5  6  7   8  9 10    11 12  13 14 15
 %}
 
-fileName = 'Gtest01.csv';
+fileName = 'gTest02.csv';
 
-specification = [ 10, 0,0,0, 2,2,2, 0,0,0, 20,.1, 0,0,1];
-              %    10, -5,0,0, 2,2,2, 0,-5,0, .2, 0,0,-1];
+specification = [ 10, 5,0,0, 1,1,1, 0,5,0, 20,.1, 0,0,1;
+                  10, -5,0,0, 1,1,1, 0,-5,0, 20,.1 0,0,1];
 
 totalParticleCount = sum(specification(:,1));
 
