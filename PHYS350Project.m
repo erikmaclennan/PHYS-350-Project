@@ -23,7 +23,7 @@ outputfilename = 'nolanTest4.csv';
 
 syms r;
 sym_global_potential = r^2
-sym_local_potential = -20e-65/(r+.2)
+sym_local_potential = -1e-65/(r+.2)
 global_potential = matlabFunction(sym_global_potential);
 local_potential = matlabFunction(sym_local_potential);
 global_force = matlabFunction(-diff(sym_global_potential));
@@ -32,9 +32,9 @@ local_force = matlabFunction(-diff(sym_local_potential));
 
 
 %% Iterative method
-method = @simple_euler;
+%method = @simple_euler;
 %method = @rk4;
-%method = @backward_euler;
+method = @backward_euler;
 %method = @simplectic;
 
 
