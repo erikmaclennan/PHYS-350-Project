@@ -17,7 +17,7 @@ Format per row:
 
 fileName = 'Gtest5.csv';
 
-specification = [ 10, 0,0,0, 2,2,2, 0,0,0, 1,1,1, .2, 0,0,1];
+specification = [ 10, 0,0,0, 2,2,2, 0,0,0, 1,1,1, 1, 0,0,1];
               %    10, -5,0,0, 2,2,2, 0,-5,0, 1,1,1, .2, 0,0,-1];
 
 totalParticleCount = sum(specification(:,1));
@@ -51,12 +51,12 @@ for cluster = 1:clusters
     relativePosition = positions - centreOfMass;
     
     angularVelocities = cross(relativePosition, velocities);
-    averageAngularVelcocity = mean(angularVelocities)
+    totalAngularVelcocity = sum(angularVelocities);
     
-    angularVelocityCorrection = angularVelocityMagnitude * angularVelocityDirection - averageAngularVelcocity;
+    angularVelocityCorrection = angularVelocityMagnitude * angularVelocityDirection - totalAngularVelcocity;
     
     relativePositionsMagnitude = sum(relativePosition.*relativePosition,2);
-    velocityCorrection = min(cross(repmat(angularVelocityCorrection, particleCount, 1), relativePosition)./relativePositionsMagnitude,1);
+    velocityCorrection = min(cross(repmat(angularVelocityCorrection, particleCount, 1), relativePosition)./relativePositionsMagnitude,100);
     velocities = velocities + velocityCorrection;
     
     wTest = cross(relativePosition, velocities);
