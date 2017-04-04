@@ -11,13 +11,13 @@ Spesification matrix:
 - dirction of angular momentum
 
 Format per row:
-[n, x,y,z, dx,dy,dz, vx,vy,vz, lmag,dl, lx,ly,lz]
+[n, x,y,z, dx,dy,dz, vx,vy,vz, lmag,dv, lx,ly,lz]
  1  2 3 4   5  6  7   8  9 10    11 12  13 14 15
 %}
 
 fileName = 'Gtest01.csv';
 
-specification = [ 10, 0,0,0, 2,2,2, 0,0,0, 5,.1, 0,0,1];
+specification = [ 10, 0,0,0, 2,2,2, 0,0,0, 20,.1, 0,0,1];
               %    10, -5,0,0, 2,2,2, 0,-5,0, .2, 0,0,-1];
 
 totalParticleCount = sum(specification(:,1));
