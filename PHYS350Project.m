@@ -93,7 +93,7 @@ for time = 1:N
         subplot(2,1,2);
         scatter3(current_position(:,1), current_position(:,2), current_position(:,3),100,'filled');
         axis([-viewing_bound,viewing_bound,-viewing_bound,viewing_bound,-viewing_bound,viewing_bound]);
-        pause(0.0001);
+        pause(0.00001);
     end
     
 end
