@@ -11,14 +11,14 @@ Spesification matrix:
 - dirction of angular momentum
 
 Format per row:
-[n, x,y,z, dx,dy,dz, vx,vy,vz, dvx,dvy,dvz, lmag,lx,ly,lz]
- 1  2 3 4   5  6  7   8  9 10   11  12  13    14 15 16 17
+[n, x,y,z, dx,dy,dz, vx,vy,vz, lmag,dl, lx,ly,lz]
+ 1  2 3 4   5  6  7   8  9 10    11 12  13 14 15
 %}
 
-fileName = 'Gtest5.csv';
+fileName = 'Gtest01.csv';
 
-specification = [ 10, 0,0,0, 2,2,2, 0,0,0, 1,1,1, 1, 0,0,1];
-              %    10, -5,0,0, 2,2,2, 0,-5,0, 1,1,1, .2, 0,0,-1];
+specification = [ 10, 0,0,0, 2,2,2, 0,0,0, 5,.1, 0,0,1];
+              %    10, -5,0,0, 2,2,2, 0,-5,0, .2, 0,0,-1];
 
 totalParticleCount = sum(specification(:,1));
 
@@ -35,46 +35,39 @@ for cluster = 1:clusters
     averagePosition = specification(cluster, 2:4);
     deviationPosition = specification(cluster, 5:7);
     averageVelocity = specification(cluster, 8:10);
-    deviationVelocity = specification(cluster, 11:13);
-    angularVelocityMagnitude = specification(cluster, 14);
-    angularVelocityDirection = specification(cluster,15:17)./norm(specification(cluster,15:17));
+    angularVelocityMagnitude = specification(cluster, 11)/particleCount;
+    deviationMagnitude = specification(cluster, 12);
+    angularVelocityDirection = specification(cluster,13:15)./norm(specification(cluster,13:15));
     
-    % Generate nromaly distributed positions and velocities for particles
-    % in cluster
+    % Generate normaly distributed positions for particles in cluster
     positions = normrnd(repmat(averagePosition, particleCount, 1), repmat(deviationPosition, particleCount, 1));
-    velocities = normrnd(repmat(averageVelocity, particleCount, 1), repmat(deviationVelocity, particleCount, 1));
-    
-    % Adjust for angular momentum of cluster
-    
     centreOfMass = mean(positions);
-    
     relativePosition = positions - centreOfMass;
     
-    angularVelocities = cross(relativePosition, velocities);
-    totalAngularVelcocity = sum(angularVelocities);
+    % Generate velocities forparticles that have spesified
+    %  - total angular momentum about cluster centre
+    %  - average velocity
     
-    angularVelocityCorrection = angularVelocityMagnitude * angularVelocityDirection - totalAngularVelcocity;
+    velocities = cross(repmat(angularVelocityDirection, particleCount, 1), relativePosition);
     
-    relativePositionsMagnitude = sum(relativePosition.*relativePosition,2);
-    velocityCorrection = min(cross(repmat(angularVelocityCorrection, particleCount, 1), relativePosition)./relativePositionsMagnitude,100);
-    velocities = velocities + velocityCorrection;
+    velocities = normrnd(velocities, deviationMagnitude);
     
-    wTest = cross(relativePosition, velocities);
-    wTestMean = mean(wTest);
-    wTestMag = norm(wTestMean)
+    velocities = velocities + averageVelocity;
     
     allPositions(index:index+particleCount-1,:) = positions; 
     allVelocities(index:index+particleCount-1,:) = velocities;
     index = index + particleCount;
 end
 
-% rescale velocities to ensure there is no drift in the system
+% Rescale velocities to ensure there is no drift in the system
 averageVelocity = mean(allVelocities);
 allVelocities = averageVelocity - allVelocities;
 
-%scatter3(allPositions(:,1),allPositions(:,2),allPositions(:,3))
-%title('positions')
-%figure
+
+% Plot result
+scatter3(allPositions(:,1),allPositions(:,2),allPositions(:,3))
+title('positions')
+figure
 scatter3(allVelocities(:,1),allVelocities(:,2),allVelocities(:,3))
 title('velocities')
 append_to_csv(fileName, 0, allPositions, allVelocities);
