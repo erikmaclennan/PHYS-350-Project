@@ -12,11 +12,8 @@ activate_write = false;
 
 viewing_bound = 10;
 
-
-filename = 'spinningFour.csv';
-
-outputfilename = 'nolanTest4.csv';
-
+filename = 'gTest02.csv';
+outputfilename = 'test9.csv';
 
 [current_position, current_velocity] = load_initial_conditions(filename);
 [particles, ~] = size(current_position);
@@ -25,17 +22,17 @@ outputfilename = 'nolanTest4.csv';
 
 syms r;
 sym_global_potential = 1e-65/r
-sym_local_potential = -200/r
+sym_local_potential = -20/(r+.2)
 global_potential = matlabFunction(sym_global_potential);
 local_potential = matlabFunction(sym_local_potential);
-global_force = matlabFunction(-diff(sym_global_potential))
-local_force = matlabFunction(-diff(sym_local_potential))
+global_force = matlabFunction(-diff(sym_global_potential));
+local_force = matlabFunction(-diff(sym_local_potential));
 
 
 
 %% Iterative method
-%method = @simple_euler;
-method = @rk4;
+method = @simple_euler;
+%method = @rk4;
 %method = @backward_euler;
 %method = @simplectic;
 

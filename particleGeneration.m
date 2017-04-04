@@ -2,27 +2,27 @@
 %{ 
 Generate clusters of particles.
 Spesification matrix:
-- number of particles, 
+- number of particles (n)
 - centre of cluster (x,y,z)
-- standard deviation in position (x,y,z)
-- average velocity of clusters (x,y,z)
-- standard deviation of velocity (x,y,z)
-- magnitude of angular momentum
-- dirction of angular momentum
+- standard deviation in position (dx,dy,dz)
+- average velocity of clusters (vx,vy,vz)
+- magnitude of angular momentum (lmag)
+- standard deviation in velocities (dv)
+- dirction of angular momentum (lx,ly,lz)
 
 Format per row:
-[n, x,y,z, dx,dy,dz, vx,vy,vz, dvx,dvy,dvz, lmag,lx,ly,lz]
- 1  2 3 4   5  6  7   8  9 10   11  12  13    14 15 16 17
+[n, x,y,z, dx,dy,dz, vx,vy,vz, lmag,dv, lx,ly,lz]
+ 1  2 3 4   5  6  7   8  9 10    11 12  13 14 15
 %}
 
-fileName = 'Gtest1.csv';
+fileName = 'gTest02.csv';
 
-spesification = [ 10, 5,0,0, 1,1,1, 0,1,0, 1,1,1, 4, 0,0,1;
-                  2, -5,0,0, 1,1,1, 0,-3,0, 1,1,1, 4, 0,0,-1];
+specification = [ 10, 5,0,0, 1,1,1, 0,5,0, 20,.1, 0,0,1;
+                  10, -5,0,0, 1,1,1, 0,-5,0, 20,.1 0,0,1];
 
-totalParticleCount = sum(spesification(:,1));
+totalParticleCount = sum(specification(:,1));
 
-[clusters, ~] = size(spesification);
+[clusters, ~] = size(specification);
 
 allPositions = zeros(totalParticleCount, 3);
 allVelocities = zeros(totalParticleCount, 3);
@@ -31,36 +31,43 @@ index = 1;
 for cluster = 1:clusters
     
     % Extract information for current cluster from spesification matrix
-    particleCount = spesification(cluster, 1);
-    averagePosition = spesification(cluster, 2:4);
-    deviationPosition = spesification(cluster, 5:7);
-    averageVelocity = spesification(cluster, 8:10);
-    deviationVelocity = spesification(cluster, 11:13);
-    angularVelocityMagnitude = spesification(cluster, 14);
-    angularVelocityDirection = spesification(cluster,15:17)./norm(spesification(cluster,15:17));
+    particleCount = specification(cluster, 1);
+    averagePosition = specification(cluster, 2:4);
+    deviationPosition = specification(cluster, 5:7);
+    averageVelocity = specification(cluster, 8:10);
+    angularVelocityMagnitude = specification(cluster, 11)/particleCount;
+    deviationMagnitude = specification(cluster, 12);
+    angularVelocityDirection = specification(cluster,13:15)./norm(specification(cluster,13:15));
     
-    % Generate nromaly distributed positions and velocities for particles
-    % in cluster
-    positions = zeros(particleCount, 3) + normrnd(repmat(averagePosition, particleCount, 1), repmat(deviationPosition, particleCount, 1));
-    velocities = zeros(particleCount, 3) + normrnd(repmat(averageVelocity, particleCount, 1), repmat(deviationVelocity, particleCount, 1));
-    
-    % Adjust for angular momentum of cluster
-    
+    % Generate normaly distributed positions for particles in cluster
+    positions = normrnd(repmat(averagePosition, particleCount, 1), repmat(deviationPosition, particleCount, 1));
     centreOfMass = mean(positions);
-    
     relativePosition = positions - centreOfMass;
     
-    angularVelocities = cross(relativePosition, velocities);
-    averageAngularVelcocity = mean(angularVelocities);
+    % Generate velocities forparticles that have spesified
+    %  - total angular momentum about cluster centre
+    %  - average velocity
     
-    angularVelocityCorrection = mean(angularVelocities) - angularVelocityMagnitude * angularVelocityDirection;
-    velocityCorrection = cross(repmat(angularVelocityCorrection, particleCount, 1), relativePosition).*abs(relativePosition).^-2;
+    velocities = cross(repmat(angularVelocityDirection, particleCount, 1), relativePosition);
     
-    velocities = velocities + velocityCorrection;
+    velocities = normrnd(velocities, deviationMagnitude);
+    
+    velocities = velocities + averageVelocity;
     
     allPositions(index:index+particleCount-1,:) = positions; 
     allVelocities(index:index+particleCount-1,:) = velocities;
     index = index + particleCount;
 end
 
+% Rescale velocities to ensure there is no drift in the system
+averageVelocity = mean(allVelocities);
+allVelocities = averageVelocity - allVelocities;
+
+
+% Plot result
+scatter3(allPositions(:,1),allPositions(:,2),allPositions(:,3))
+title('positions')
+figure
+scatter3(allVelocities(:,1),allVelocities(:,2),allVelocities(:,3))
+title('velocities')
 append_to_csv(fileName, 0, allPositions, allVelocities);
