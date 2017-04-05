@@ -9,14 +9,14 @@ z_dist = z_pos-z_pos';
 
 dist = (x_dist.^2+y_dist.^2+z_dist.^2).^0.5+I;
 
-abs_dist = (x_pos.^2+y_pos.^2+z_pos.^2).^0.5;
+abs_dist = (position(:,1).^2+position(:,2).^2+position(:,3).^2).^0.5;
 
 x_hat = x_dist./dist;
 y_hat = y_dist./dist;
 z_hat = z_dist./dist;
     
-abs_x_hat = x_pos./abs_dist;
-abs_y_hat = y_pos./abs_dist;
-abs_z_hat = z_pos./abs_dist;
+abs_x_hat = position(:,1)./abs_dist;
+abs_y_hat = position(:,2)./abs_dist;
+abs_z_hat = position(:,3)./abs_dist;
 
 end
