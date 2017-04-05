@@ -12,8 +12,9 @@ activate_write = false;
 
 viewing_bound = 10;
 
-filename = 'gTest02.csv';
-outputfilename = 'test9.csv';
+filename = 'Gtest01-1.csv';
+
+outputfilename = 'nolanTest4.csv';
 
 [current_position, current_velocity] = load_initial_conditions(filename);
 [particles, ~] = size(current_position);
@@ -21,8 +22,8 @@ outputfilename = 'test9.csv';
 %% Potential functions
 
 syms r;
-sym_global_potential = 1e-65/r
-sym_local_potential = -20/(r+.2)
+sym_global_potential = r^2
+sym_local_potential = -1e-65/(r+.2)
 global_potential = matlabFunction(sym_global_potential);
 local_potential = matlabFunction(sym_local_potential);
 global_force = matlabFunction(-diff(sym_global_potential));
@@ -34,7 +35,7 @@ local_force = matlabFunction(-diff(sym_local_potential));
 method = @simple_euler;
 %method = @rk4;
 %method = @backward_euler;
-%method = @simplectic;
+
 
 
 times = [];
@@ -42,8 +43,10 @@ tot = [];
 kin = [];
 pot = [];
 
+normalized_energy = false;
+
 for time = 1:N
-    kinetic_energies = current_velocity.^2;
+    kinetic_energies = current_velocity.^2/2;
     kinetic_energies = sum(kinetic_energies,2);
     global_potential_energies = global_potential(sqrt(sum(current_position.^2,2)));
     
@@ -60,9 +63,19 @@ for time = 1:N
     local_potential_energies(logical(eye(n))) = 0;
     local_potential_energies=sum(local_potential_energies,2);
     
-    potential_energies = global_potential_energies + local_potential_energies;
+    if time == 1
+        potential_offset = sum(global_potential_energies + local_potential_energies,2);
+    end
+    
+    potential_energies = global_potential_energies + local_potential_energies - potential_offset;
     
     total_energies = kinetic_energies + potential_energies;
+    
+     if(~normalized_energy)
+        normalization_const = abs(sum(total_energies));
+        normalized_energy = true;
+     end
+   
     [current_position, current_velocity] = method(current_position, current_velocity, delta_t, iterative_steps, global_force, local_force);
 
     if mod(time, write_step) == 0 && activate_write
@@ -70,17 +83,17 @@ for time = 1:N
     end 
     
     times = [times, time];
-    tot = [tot, mean(total_energies)];
-    kin = [kin, mean(kinetic_energies)];
-    pot = [pot, mean(potential_energies)];
+    tot = [tot, sum(total_energies)/normalization_const];
+    kin = [kin, sum(kinetic_energies)/normalization_const];
+    pot = [pot, sum(potential_energies)/normalization_const];
     
     if mod(time,100) == 0
         subplot(2,1,1);
-        plot(times,tot);
+        plot(times,tot,'LineWidth',3);
         hold on;
-        plot(times,kin);
+        plot(times,kin,'LineWidth',2);
         hold on;
-        plot(times,pot);
+        plot(times,pot,'LineWidth',2);
         legend('show')
         legend('total energy', 'kinetic energy', 'potential energy')
         grid minor
@@ -90,9 +103,9 @@ for time = 1:N
         %total_energies
         
         subplot(2,1,2);
-        scatter3(current_position(:,1), current_position(:,2), current_position(:,3));
+        scatter3(current_position(:,1), current_position(:,2), current_position(:,3),100,'filled');
         axis([-viewing_bound,viewing_bound,-viewing_bound,viewing_bound,-viewing_bound,viewing_bound]);
-        pause(0.0001);
+        pause(0.00001);
     end
     
 end
