@@ -12,7 +12,7 @@ activate_write = false;
 
 viewing_bound = 10;
 
-filename = 'Gtest01-1.csv';
+filename = 'gTest02.csv';
 
 outputfilename = 'nolanTest4.csv';
 
@@ -22,8 +22,8 @@ outputfilename = 'nolanTest4.csv';
 %% Potential functions
 
 syms r;
-sym_global_potential = r^2
-sym_local_potential = -1e-65/(r+.2)
+sym_global_potential = -100/(r+.2)
+sym_local_potential = -100/(r+.2)
 global_potential = matlabFunction(sym_global_potential);
 local_potential = matlabFunction(sym_local_potential);
 global_force = matlabFunction(-diff(sym_global_potential));
@@ -35,7 +35,6 @@ local_force = matlabFunction(-diff(sym_local_potential));
 method = @simple_euler;
 %method = @rk4;
 %method = @backward_euler;
-
 
 
 times = [];
@@ -59,7 +58,7 @@ for time = 1:N
     z_pos = zeros(n) + current_position(:,3);
     z_dist = z_pos-z_pos';
     dist = (x_dist.^2+y_dist.^2+z_dist.^2).^0.5+eye(n);
-    local_potential_energies = local_potential(dist);
+    local_potential_energies = local_potential(dist)/2;
     local_potential_energies(logical(eye(n))) = 0;
     local_potential_energies=sum(local_potential_energies,2);
     
@@ -90,9 +89,7 @@ for time = 1:N
     if mod(time,100) == 0
         L = sum(cross(current_position, current_velocity),1);
         L = 5.*L./norm(L);
-        
 
- 
         subplot(2,1,1);
         plot(times,tot,'LineWidth',3);
         hold on;
