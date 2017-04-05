@@ -1,3 +1,7 @@
 *.m~
+<<<<<<< HEAD
+.DS_Store
+=======
 *.DS_Store
+>>>>>>> develop
 *.csv
