@@ -5,11 +5,11 @@ function [position, velocity] = backward_euler(position,velocity,delta_t,n_steps
     position = position';
     velocity = velocity';
     
-    FPUs = 10;
+    FPUs = 1;
     
     for i = 1:n_steps
-        vt_plus1 = position;
-        pt_plus1 = velocity;
+        pt_plus1 = position;
+        vt_plus1 = velocity;
         for j = 1:FPUs
             x_pos = zeros(n) + pt_plus1(1,:);
             x_dist = x_pos-x_pos';
@@ -33,14 +33,14 @@ function [position, velocity] = backward_euler(position,velocity,delta_t,n_steps
             force_mag = local_force(dist);
 
             force_mag(logical(I)) = 0;
+            
+            dvx = delta_t.*(sum(force_mag.*x_hat) + abs_force_mag.*abs_x_hat);
+            dvy = delta_t.*(sum(force_mag.*y_hat) + abs_force_mag.*abs_y_hat);
+            dvz = delta_t.*(sum(force_mag.*z_hat) + abs_force_mag.*abs_z_hat);
 
-            vt_plus1(1,:) = velocity(1,:) + delta_t.*sum(force_mag.*x_hat);
-            vt_plus1(2,:) = velocity(2,:) + delta_t.*sum(force_mag.*y_hat);
-            vt_plus1(3,:) = velocity(3,:) + delta_t.*sum(force_mag.*z_hat);
-
-            vt_plus1(1,:) = velocity(1,:) + delta_t.*abs_force_mag.*abs_x_hat;
-            vt_plus1(2,:) = velocity(2,:) + delta_t.*abs_force_mag.*abs_y_hat;
-            vt_plus1(3,:) = velocity(3,:) + delta_t.*abs_force_mag.*abs_z_hat;
+            vt_plus1(1,:) = velocity(1,:) + dvx;
+            vt_plus1(2,:) = velocity(2,:) + dvy;
+            vt_plus1(3,:) = velocity(3,:) + dvz;
 
         pt_plus1 = (position+vt_plus1.*delta_t);
         end
