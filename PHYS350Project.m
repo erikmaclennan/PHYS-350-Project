@@ -88,6 +88,11 @@ for time = 1:N
     pot = [pot, sum(potential_energies)/normalization_const];
     
     if mod(time,100) == 0
+        L = sum(cross(current_position, current_velocity),1);
+        L = 5.*L./norm(L);
+        
+
+ 
         subplot(2,1,1);
         plot(times,tot,'LineWidth',3);
         hold on;
@@ -96,6 +101,8 @@ for time = 1:N
         plot(times,pot,'LineWidth',2);
         legend('show')
         legend('total energy', 'kinetic energy', 'potential energy')
+        xlabel('number of time steps');
+        ylabel('Energy')
         grid minor
         grid on
         hold off;
@@ -104,6 +111,9 @@ for time = 1:N
         
         subplot(2,1,2);
         scatter3(current_position(:,1), current_position(:,2), current_position(:,3),100,'filled');
+        hold on;
+        quiver3(0,0,0,L(1),L(2),L(3),'LineWidth',3);
+        hold off;
         axis([-viewing_bound,viewing_bound,-viewing_bound,viewing_bound,-viewing_bound,viewing_bound]);
         pause(0.00001);
     end
