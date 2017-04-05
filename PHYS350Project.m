@@ -12,7 +12,7 @@ activate_write = false;
 
 viewing_bound = 10;
 
-filename = 'spinningFour.csv';
+filename = 'Gtest01-1.csv';
 
 outputfilename = 'nolanTest4.csv';
 
@@ -32,16 +32,18 @@ local_force = matlabFunction(-diff(sym_local_potential));
 
 
 %% Iterative method
-%method = @simple_euler;
+method = @simple_euler;
 %method = @rk4;
-method = @backward_euler;
-%method = @simplectic;
+%method = @backward_euler;
+
 
 
 times = [];
 tot = [];
 kin = [];
 pot = [];
+
+normalized_energy = false;
 
 for time = 1:N
     kinetic_energies = current_velocity.^2/2;
@@ -61,9 +63,19 @@ for time = 1:N
     local_potential_energies(logical(eye(n))) = 0;
     local_potential_energies=sum(local_potential_energies,2);
     
-    potential_energies = global_potential_energies + local_potential_energies;
+    if time == 1
+        potential_offset = sum(global_potential_energies + local_potential_energies,2);
+    end
+    
+    potential_energies = global_potential_energies + local_potential_energies - potential_offset;
     
     total_energies = kinetic_energies + potential_energies;
+    
+     if(~normalized_energy)
+        normalization_const = abs(sum(total_energies));
+        normalized_energy = true;
+     end
+   
     [current_position, current_velocity] = method(current_position, current_velocity, delta_t, iterative_steps, global_force, local_force);
 
     if mod(time, write_step) == 0 && activate_write
@@ -71,9 +83,9 @@ for time = 1:N
     end 
     
     times = [times, time];
-    tot = [tot, sum(total_energies)];
-    kin = [kin, sum(kinetic_energies)];
-    pot = [pot, sum(potential_energies)];
+    tot = [tot, sum(total_energies)/normalization_const];
+    kin = [kin, sum(kinetic_energies)/normalization_const];
+    pot = [pot, sum(potential_energies)/normalization_const];
     
     if mod(time,100) == 0
         subplot(2,1,1);
