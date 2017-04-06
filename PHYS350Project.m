@@ -3,16 +3,16 @@
 % 2017
 
 %% Initial parameters
-N = 10000000; %total time steps
+N = 100000;%00; %total time steps
 iterative_steps = 1; 
-delta_t = 0.001;
+delta_t = 0.0005;
 write_step = 10;
 
 activate_write = false;
 
 viewing_bound = 10;
 
-filename = 'Gtest01-1.csv';
+filename = 'spinningFour.csv';
 
 outputfilename = 'nolanTest4.csv';
 
@@ -22,7 +22,7 @@ outputfilename = 'nolanTest4.csv';
 %% Potential functions
 
 syms r;
-sym_global_potential = r^2
+sym_global_potential = -200/r
 sym_local_potential = -1e-65/(r+.2)
 global_potential = matlabFunction(sym_global_potential);
 local_potential = matlabFunction(sym_local_potential);
