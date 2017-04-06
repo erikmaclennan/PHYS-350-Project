@@ -1,5 +1,5 @@
 
-function [position, velocity] = backward_euler(position,velocity,delta_t,n_steps,global_force,local_force)
+function [position, velocity] = backward_euler(position,velocity,delta_t,n_steps,global_force,local_force,friction)
     [n, ~] = size(position);
     I = eye(n);
     position = position';
