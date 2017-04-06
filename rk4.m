@@ -1,6 +1,6 @@
 %Runge-Kutta Method
 
-function [positions, velocities] = rk4(position,velocity,delta_t,n_steps,global_potential,local_potential)
+function [positions, velocities] = rk4(position,velocity,delta_t,n_steps,global_potential,local_potential,friction)
 %Number of particles
 [n, ~] = size(position);
 positions = zeros(n,3,n_steps);

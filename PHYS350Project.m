@@ -3,18 +3,18 @@
 % 2017
 
 %% Initial parameters
-N = 10000000; %total time steps
+N = 100000000; %total time steps
 iterative_steps = 1; 
-delta_t = 0.001;
+delta_t = 0.0001;
 write_step = 10;
 
-activate_write = false;
+activate_write = true;
 
-viewing_bound = 10;
+viewing_bound = 60;
 
-filename = 'gTest02.csv';
+filename = 'bigCrystalSpin.csv';
 
-outputfilename = 'nolanTest4.csv';
+outputfilename = 'nolanTest8.csv';
 
 [current_position, current_velocity] = load_initial_conditions(filename);
 [particles, ~] = size(current_position);
@@ -22,12 +22,13 @@ outputfilename = 'nolanTest4.csv';
 %% Potential functions
 
 syms r;
-sym_global_potential = -100/(r+.2)
-sym_local_potential = -100/(r+.2)
+sym_global_potential = 100*r+0.01*r^2
+sym_local_potential = 10*((1/r)^12-(1/r^6))
 global_potential = matlabFunction(sym_global_potential);
 local_potential = matlabFunction(sym_local_potential);
 global_force = matlabFunction(-diff(sym_global_potential));
 local_force = matlabFunction(-diff(sym_local_potential));
+friction = 0.03
 
 
 
@@ -75,7 +76,7 @@ for time = 1:N
         normalized_energy = true;
      end
    
-    [current_position, current_velocity] = method(current_position, current_velocity, delta_t, iterative_steps, global_force, local_force);
+    [current_position, current_velocity] = method(current_position, current_velocity, delta_t, iterative_steps, global_force, local_force,friction);
 
     if mod(time, write_step) == 0 && activate_write
         append_to_csv(outputfilename, time, current_position, current_velocity);

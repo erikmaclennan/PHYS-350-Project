@@ -15,10 +15,10 @@ Format per row:
  1  2 3 4   5  6  7   8  9 10    11 12  13 14 15
 %}
 
-fileName = 'gTest02.csv';
+fileName = 'bigCrystalSpin.csv';
 
-specification = [ 10, 5,0,0, 1,1,1, 0,5,0, 20,.1, 0,0,1;
-                  10, -5,0,0, 1,1,1, 0,-5,0, 20,.1 0,0,1];
+specification = [ 50, 20,0,0, 7,7,7, 0,50,0, 20,.1, 0,0,1;
+                  50, -20,0,0, 7,7,7, 0,-50,0, 20,.1 0,0,1];
 
 totalParticleCount = sum(specification(:,1));
 
