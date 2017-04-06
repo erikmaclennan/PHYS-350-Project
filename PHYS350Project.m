@@ -14,6 +14,7 @@ viewing_bound = 10;
 
 filename = 'spinningFour.csv';
 
+
 outputfilename = 'nolanTest4.csv';
 
 [current_position, current_velocity] = load_initial_conditions(filename);
@@ -37,7 +38,6 @@ method = @simple_euler;
 %method = @backward_euler;
 
 
-
 times = [];
 tot = [];
 kin = [];
@@ -59,7 +59,7 @@ for time = 1:N
     z_pos = zeros(n) + current_position(:,3);
     z_dist = z_pos-z_pos';
     dist = (x_dist.^2+y_dist.^2+z_dist.^2).^0.5+eye(n);
-    local_potential_energies = local_potential(dist);
+    local_potential_energies = local_potential(dist)/2;
     local_potential_energies(logical(eye(n))) = 0;
     local_potential_energies=sum(local_potential_energies,2);
     
@@ -90,9 +90,7 @@ for time = 1:N
     if mod(time,100) == 0
         L = sum(cross(current_position, current_velocity),1);
         L = 5.*L./norm(L);
-        
 
- 
         subplot(2,1,1);
         plot(times,tot,'LineWidth',3);
         hold on;
