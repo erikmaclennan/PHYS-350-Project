@@ -1,7 +1,7 @@
 %Runge-Kutta Method
 
 function [position, velocity] = rk4(position,velocity,delta_t,n_steps,global_force,local_force,friction)
-    for n=i:n_steps
+    for n=1:n_steps
         %compute k1
         positions1 = position;
         velocities1 = velocity;
