@@ -1,105 +1,30 @@
 %Runge-Kutta Method
 
-function [positions, velocities] = rk4(position,velocity,delta_t,n_steps,global_potential,local_potential,friction)
-%Number of particles
-[n, ~] = size(position);
-positions = zeros(n,3,n_steps);
-velocities = zeros(n,3,n_steps);
+function [position, velocity] = rk4(position,velocity,delta_t,n_steps,global_force,local_force,friction)
+    for n=i:n_steps
+        %compute k1
+        positions1 = position;
+        velocities1 = velocity;
+        [k1_vel,k1_acc]=compute_vel_acc(positions1,velocities1,global_force,local_force,friction);
 
-k_factor = zeros(n,3);
-[dist, abs_dist, x_hat, y_hat, z_hat, abs_x_hat, abs_y_hat, abs_z_hat] = k_support_rk4(position,n,k_factor);
+        %compute k2
+        positions2 = position+k1_vel.*delta_t/2;
+        velocities2 = velocity+k1_acc.*delta_t/2;
+        [k2_vel,k2_acc]=compute_vel_acc(positions2,velocities2,global_force,local_force,friction);
 
-k1 = zeros(n,3);
-k1(:,1) = (-1)*sum(local_potential(dist).*x_hat)' + global_potential(abs_dist).*abs_x_hat; 
-k1(:,2) = (-1)*sum(local_potential(dist).*y_hat)' + global_potential(abs_dist).*abs_y_hat;  
-k1(:,3) =  (-1)*sum(local_potential(dist).*z_hat)' + global_potential(abs_dist).*abs_z_hat; 
+        %compute k3
+        positions3 = position+k2_vel.*delta_t/2;
+        velocities3 = velocity+k2_acc.*delta_t/2;
+        [k3_vel,k3_acc]=compute_vel_acc(positions3,velocities3,global_force,local_force,friction);
 
-%%
-%Calculate k2
-k_factor(:,1) = (delta_t/2).*k1(:,1); 
-k_factor(:,2) = (delta_t/2).*k1(:,2);
-k_factor(:,3) = (delta_t/2).*k1(:,3);
-[dist, abs_dist, x_hat, y_hat, z_hat, abs_x_hat, abs_y_hat, abs_z_hat] = k_support_rk4(position,n,k_factor);
+        %compute k4
+        positions4 = position+k3_vel.*delta_t;
+        velocities4 = velocity+k3_acc.*delta_t;
+        [k4_vel,k4_acc]=compute_vel_acc(positions4,velocities4,global_force,local_force,friction);
 
-k2 = zeros(n,3);
-k2(:,1) = (-1)*sum(local_potential(dist).*x_hat)' + global_potential(abs_dist).*abs_x_hat; 
-k2(:,2) = (-1)*sum(local_potential(dist).*y_hat)' + global_potential(abs_dist).*abs_y_hat;  
-k2(:,3) =  (-1)*sum(local_potential(dist).*z_hat)' + global_potential(abs_dist).*abs_z_hat; 
-
-%%
-%Calculate k3
-k_factor(:,1) = (delta_t/2).*k2(:,1); 
-k_factor(:,2) = (delta_t/2).*k2(:,2);
-k_factor(:,3) = (delta_t/2).*k2(:,3);
-[dist, abs_dist, x_hat, y_hat, z_hat, abs_x_hat, abs_y_hat, abs_z_hat] = k_support_rk4(position,n,k_factor);
-
-k3 = zeros(n,3);
-k3(:,1) = (-1)*sum(local_potential(dist).*x_hat)' + global_potential(abs_dist).*abs_x_hat; 
-k3(:,2) = (-1)*sum(local_potential(dist).*y_hat)' + global_potential(abs_dist).*abs_y_hat;  
-k3(:,3) =  (-1)*sum(local_potential(dist).*z_hat)' + global_potential(abs_dist).*abs_z_hat; 
-%%
-%Calculate k4
-k_factor(:,1) = (delta_t)*k3(:,1); 
-k_factor(:,2) = (delta_t)*k3(:,2);
-k_factor(:,3) = (delta_t)*k3(:,3);
-[dist, abs_dist, x_hat, y_hat, z_hat, abs_x_hat, abs_y_hat, abs_z_hat] = k_support_rk4(position,n,k_factor);
-
-k4 = zeros(n,3);
-k4(:,1) = (-1)*sum(local_potential(dist).*x_hat)' + global_potential(abs_dist).*abs_x_hat; 
-k4(:,2) = (-1)*sum(local_potential(dist).*y_hat)' + global_potential(abs_dist).*abs_y_hat;  
-k4(:,3) =  (-1)*sum(local_potential(dist).*z_hat)' + global_potential(abs_dist).*abs_z_hat; 
-
-%%
-%Compute next time step
-positions(:,:,1) = position + ((velocity*delta_t)/6)*(6 + 3*delta_t + (delta_t)^2 + ((delta_t^3)/4));
-velocities(:,:,1) = velocity + (delta_t/6)*(k1 + 2*k2 + 2*k3 + k4);
-
-%%
-    if (n_steps > 1)
-        for i = 2:(n_steps)
-        %Compute k Factors
-        %k1
-        k_factor = zeros(n,3);
-        [dist, abs_dist, x_hat, y_hat, z_hat, abs_x_hat, abs_y_hat, abs_z_hat] = k_support_rk4(positions(:,:,i-1),n,k_factor);
-
-        k1 = zeros(n,3);
-        k1(:,1) = (-1)*sum(local_potential(dist).*x_hat)' + global_potential(abs_dist).*abs_x_hat; 
-        k1(:,2) = (-1)*sum(local_potential(dist).*y_hat)' + global_potential(abs_dist).*abs_y_hat;
-        k1(:,3) =  (-1)*sum(local_potential(dist).*z_hat)' + global_potential(abs_dist).*abs_z_hat; 
-
-        k_factor(:,1) = (delta_t/2)*k1(:,1);
-        k_factor(:,2) = (delta_t/2)*k1(:,2);
-        k_factor(:,3) = (delta_t/2)*k1(:,3);
-        [dist, abs_dist, x_hat, y_hat, z_hat, abs_x_hat, abs_y_hat, abs_z_hat] = k_support_rk4(positions(:,:,i-1),n,k_factor);
-        %k2
-        k2 = zeros(n,3);
-        k2(:,1) = (-1)*sum(local_potential(dist).*x_hat)' + global_potential(abs_dist).*abs_x_hat; 
-        k2(:,2) = (-1)*sum(local_potential(dist).*y_hat)' + global_potential(abs_dist).*abs_y_hat;  
-        k2(:,3) =  (-1)*sum(local_potential(dist).*z_hat)' + global_potential(abs_dist).*abs_z_hat; 
-
-        k_factor(:,1) = (delta_t/2)*k2(:,1); 
-        k_factor(:,2) = (delta_t/2)*k2(:,2);
-        k_factor(:,3) = (delta_t/2)*k2(:,3);
-        [dist, abs_dist, x_hat, y_hat, z_hat, abs_x_hat, abs_y_hat, abs_z_hat] = k_support_rk4(positions(:,:,i-1),n,k_factor);
-        %k3
-        k3 = zeros(n,3);
-        k3(:,1) = (-1)*sum(local_potential(dist).*x_hat)' + global_potential(abs_dist).*abs_x_hat; 
-        k3(:,2) = (-1)*sum(local_potential(dist).*y_hat)' + global_potential(abs_dist).*abs_y_hat;  
-        k3(:,3) =  (-1)*sum(local_potential(dist).*z_hat)' + global_potential(abs_dist).*abs_z_hat; 
-    
-        k_factor(:,1) = (delta_t)*k3(:,1); 
-        k_factor(:,2) = (delta_t)*k3(:,2);
-        k_factor(:,3) = (delta_t)*k3(:,3);
-        [dist, abs_dist, x_hat, y_hat, z_hat, abs_x_hat, abs_y_hat, abs_z_hat] = k_support_rk4(positions(:,:,i-1),n,k_factor);
-        %k4
-        k4 = zeros(n,3);
-        k4(:,1) = (-1)*sum(local_potential(dist).*x_hat)' + global_potential(abs_dist).*abs_x_hat; 
-        k4(:,2) = (-1)*sum(local_potential(dist).*y_hat)' + global_potential(abs_dist).*abs_y_hat;  
-        k4(:,3) =  (-1)*sum(local_potential(dist).*z_hat)' + global_potential(abs_dist).*abs_z_hat; 
-        
-        %Compute the next time step
-        positions(:, :,i) = positions(:,:,i-1) + ((velocities(:,:,i-1)*delta_t)/6)*(6 + 3*delta_t + (delta_t)^2 + ((delta_t^3)/4));
-        velocities(:,:,i) =  velocities(:,:,i-1) + (delta_t/6)*(k1 + 2*k2 + 2*k3 + k4);
-        end
+        %compute next position and velocity
+        position = position + delta_t./6.*(k1_vel+2.*k2_vel+2.*k3_vel+k4_vel);
+        velocity = velocity + delta_t./6.*(k1_acc+2.*k2_acc+2.*k3_acc+k4_acc);
     end
+
 end
